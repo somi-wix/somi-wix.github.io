@@ -34,24 +34,41 @@ const end = Date.now() + duration;
 let score = 0;
 let timeOver = false;
 
+function init() {
+    score = 0;
+    timeOver = false;
+
+    finalScore.hidden = true;
+
+    let interval = window.setInterval(() => {
+        timeLeftText.innerText = getTimeLeft();
+    }, 1000);
+
+    window.setTimeout(() => {
+        timeOver = true;
+        clearInterval(interval);
+        inputArea.disabled = true;
+        finalScoreText.innerText = score;
+        finalScore.hidden = false;
+    }, duration);
+
+    window.addEventListener("keyup", 
+        (e) => {
+            if (timeOver && e.Key === 'Enter') {
+                init();
+            }
+        }
+    );
+}
+
 function getTimeLeft() {
     return Math.max(0, Math.ceil((end - Date.now()) / 1000));
 }
 
-let interval = window.setInterval(() => {
-    timeLeftText.innerText = getTimeLeft();
-}, 1000);
-
-window.setTimeout(() => {
-    timeOver = true;
-    clearInterval(interval);
-    inputArea.disabled = true;
-    finalScoreText.innerText = score;
-}, duration);
-
 window.addEventListener("load", 
-    (e) => {
+    () => {
         wordString.innerText = words[Math.floor(Math.random() * words.length)];
+        init();
     }
 );
 
@@ -64,10 +81,6 @@ inputArea.addEventListener("keyup",
                 inputArea.value = "";
                 score++;
                 scoreText.innerText = score;
-            }
-        } else {
-            if (e.key == 'Enter') {
-                
             }
         }
     }
