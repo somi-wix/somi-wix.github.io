@@ -10,12 +10,22 @@
         <div>
             <input type="text" id="input-area"></textarea>
         </div>
+        <h3 class="padding-20px" id="time-left">Time left: <span id="time-left-text"></span></h3>
         <div class="status-row">
-            <h3 class="padding-20px" id="time-left">Time left: <span id="time-left-text"></span></h3>
-            <h3 class="padding-20px" id="ksps">Keystrokes per second: <span id="ksps-text"></span></h3>
+            <h3 class="padding-20px" id="charps">Characters per second: <span id="charps-text"></span></h3>
+            <h3 class="padding-20px">Score: <span id="score-text">0</span></h3>
         </div>
-        <h3>Score: <span id="score-text"></span></h3>
         <h3 id="final-score">Final Score: <span id="final-score-text"></span></h3>
+        <button type="button" onclick="clearLeaderBoard()">Clear Leaderboard</button>
+    </div>
+    <div id="leaderboard-area">
+        <table id="leaderboard">
+            <tr>
+                <th>Session ID</th>
+                <th>Score</th>
+                <th>Highest Keystrokes per Second</th>
+            </tr>
+        </table>
     </div>
     <script src="./js/index.js"></script>
 </body>
