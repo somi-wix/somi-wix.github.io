@@ -134,6 +134,10 @@ function init(difficulty) {
     clearTimeout(timeOut);
     clearInterval(interval);
 
+    if (localStorage.leaderBoard == null) {
+        localStorage.leaderBoard = "";
+    }
+
     words = difficulties[difficulty].words;
     duration = difficulties[difficulty].time * 1000;
     difficultyName = difficulties[difficulty].name;
