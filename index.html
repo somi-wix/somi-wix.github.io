@@ -1,11 +1,18 @@
 <head>
-    <title>TypeMaster v0.0.1</title>
+    <title>TypeMaster v1.0.0</title>
     <link rel="stylesheet" href="./css/type-master.css"/>
 </head>
 
 <body>
-    <h1>TypeMaster v0.0.1</h1>
+    <h1>TypeMaster v1.0.0</h1>
     <div id="main-area">
+        <select onchange="init(this.options[this.selectedIndex].value)" name="Difficulty" id="difficulty-dropdown">
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+            <option value="very_hard">Very Hard</option>
+            <option value="insane">Insane</option>
+        </select>
         <h2 id="word-string"></h2>
         <div>
             <input type="text" id="input-area"></textarea>
@@ -21,7 +28,9 @@
     <div id="leaderboard-area">
         <table id="leaderboard">
             <tr>
-                <th>Session ID</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Difficulty</th>
                 <th>Score</th>
                 <th>Highest Keystrokes per Second</th>
             </tr>

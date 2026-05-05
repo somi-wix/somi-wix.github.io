@@ -58,7 +58,7 @@ body {
     margin: 10px;
 }
 
-#leaderboard, tr, th, td, button {
+#leaderboard, #difficulty-dropdown, tr, th, td, button {
     color: #AAFF00;
     border: #AAFF00 solid 2px;
     padding: 10px;

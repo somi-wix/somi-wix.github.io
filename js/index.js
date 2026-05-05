@@ -1,5 +1,6 @@
 const difficulties = {
-    easy: {
+    "easy": {
+        name: "Easy",
         time: 10,
         words: [
             "the", "be", "of", "and", "a", "to", "in", "he", "have", "it",
@@ -17,7 +18,8 @@ const difficulties = {
             "eye", "plan", "run", "keep", "face", "fact", "play", "help", "line", "city"
         ]
     },
-    medium: {
+    "medium": {
+        name: "Medium",
         time: 20, words: [
             "which", "would", "there", "other", "about", "could", "state", "these",
             "first", "think", "after", "great", "where", "people", "those", "place",
@@ -27,18 +29,45 @@ const difficulties = {
             "again", "around", "order", "group", "stand", "early", "course", "change"
         ]
     },
-    hard: {
+    "hard": {
+        name: "Hard",
         time: 30, words: [
             "before", "through", "should", "because", "nation", "become", "between",
             "develop", "general", "another", "against", "interest", "present", "without",
             "govern", "possible", "consider", "program", "problem", "however", "system",
             "increase"
         ]
+    },
+    "very_hard": {
+        name: "Very Hard",
+        time: 45, words: [
+            "acknowledge", "bureaucracy", "conscientious", "deteriorate", "entrepreneur",
+            "facilitate", "gregarious", "hypothetical", "idiosyncrasy", "juxtaposition",
+            "knowledgeable", "legitimate", "miscellaneous", "nevertheless", "ostentatious",
+            "perseverance", "quintessential", "reminiscence", "simultaneously", "transcendental",
+            "unprecedented", "vicissitude", "whimsical", "xenophobia", "yearning",
+            "zealousness", "ambivalent", "benevolent", "cacophony", "diligent",
+            "ephemeral", "fastidious", "garrulous", "harbinger", "indelible"
+        ]
+    },
+    "insane": {
+        name: "Insane",
+        time: 60, words: [
+            "antidisestablishmentarianism", "pneumonoultramicroscopicsilicovolcanoconiosis",
+            "floccinaucinihilipilification", "supercalifragilisticexpialidocious",
+            "pseudopseudohypoparathyroidism", "thyroparathyroidectomized",
+            "incomprehensibilities", "uncharacteristically", "counterrevolutionaries",
+            "deinstitutionalization", "electroencephalographically", "interdenominational",
+            "compartmentalization", "disproportionately", "overintellectualization",
+            "psychophysiological", "ultraconservatively", "unconstitutionally",
+            "indistinguishability", "transubstantiation", "phosphatidylcholine",
+            "hexakosioihexekontahexaphobia", "hippopotomonstrosesquippedaliophobia",
+            "otorhinolaryngological", "magnetohydrodynamics", "spectrophotometrically",
+            "thermoluminescence", "anthropomorphization", "neuroendocrinological",
+            "psychoneuroimmunology"
+        ]
     }
 };
-
-const words = difficulties.easy.words;
-const duration = difficulties.easy.time * 1000;
 
 const inputArea = document.getElementById("input-area");
 const wordString = document.getElementById("word-string");
@@ -56,6 +85,10 @@ let timeElapsed = 0;
 let start = 0;
 let highestCharsPs = 0;
 let sessionId = 0;
+let timeOut;
+let interval;
+let words;
+let duration;
 
 function getTimeLeft(end) {
     return Math.max(0, Math.ceil((end - Date.now()) / 1000));
@@ -66,23 +99,27 @@ function randomWord(words) {
 }
 
 function renderLeaderBoard() {
-    leaderBoardTable.innerHTML = "<tr><th>Session ID</th><th>Score</th><th>Highest Keystrokes per Second</th></tr>";
+    leaderBoardTable.innerHTML = "<tr><th>Date</th><th>Time</th><th>Difficulty</th><th>Score</th><th>Highest Keystrokes per Second</th></tr>";
 
     // Populate the table from local storage
     let leaderBoardScores = localStorage.leaderBoard.split(";");
     for (i = 0; i < leaderBoardScores.length; i++) {
         let scoreRow = leaderBoardScores[i];
         let values = scoreRow.split(",");
-        if (values.length != 3) {
+        if (values.length != 5) {
             continue;
         }
         let row = leaderBoardTable.insertRow(-1);
-        let sessionIdCell = row.insertCell(0);
-        sessionIdCell.innerHTML = values[0];
-        let scoreCell = row.insertCell(1);
-        scoreCell.innerHTML = values[1];
-        let highestCharsPerSecond = row.insertCell(2);
-        highestCharsPerSecond.innerHTML = values[2];
+        let dateCell = row.insertCell(-1);
+        dateCell.innerHTML = values[0].trim();
+        let timeCell = row.insertCell(-1);
+        timeCell.innerHTML = values[1].trim();
+        let diffCell = row.insertCell(-1);
+        diffCell.innerHTML = values[2].trim();
+        let scoreCell = row.insertCell(-1);
+        scoreCell.innerHTML = values[3];
+        let highestCharsPerSecond = row.insertCell(-1);
+        highestCharsPerSecond.innerHTML = values[4];
     }
 }
 
@@ -93,7 +130,13 @@ function clearLeaderBoard() {
     score = 0;
 }
 
-function init() {
+function init(difficulty) {
+    clearTimeout(timeOut);
+    clearInterval(interval);
+
+    words = difficulties[difficulty].words;
+    duration = difficulties[difficulty].time * 1000;
+    difficultyName = difficulties[difficulty].name;
     sessionId++;
     // Reset all values
     score = 0;
@@ -125,13 +168,13 @@ function init() {
     // Every millisecond it will update the time, but the changes
     // will only show up every second because the ceiling of the 
     // time difference till the end in seconds is shown
-    let interval = window.setInterval(() => {
+    interval = window.setInterval(() => {
         timeLeftText.innerText = getTimeLeft(end);
         timeElapsed++;
     }, 1);
 
     // Set a timeout for game over
-    window.setTimeout(() => {
+    timeOut = window.setTimeout(() => {
         // Mark game over
         timeOver = true;
 
@@ -142,7 +185,8 @@ function init() {
         finalScoreText.innerText = score;
         finalScore.hidden = false;
 
-        localStorage.setItem("leaderBoard", localStorage.getItem("leaderBoard") + `${sessionId},${score},${highestCharsPs};`);
+        localStorage.setItem("leaderBoard", 
+            localStorage.getItem("leaderBoard") + `${new Date().toLocaleString()},${difficultyName},${score},${highestCharsPs};`);
         renderLeaderBoard();
         // Clear the interval object
         clearInterval(interval);
@@ -153,7 +197,7 @@ window.addEventListener("keyup",
     (e) => {
         // If time is over and user presses 'Enter', restart the game
         if (timeOver && e.key === 'Enter') {
-            init();
+            init(document.getElementById("difficulty-dropdown").value);
         }
     }
 );
@@ -161,7 +205,7 @@ window.addEventListener("keyup",
 window.addEventListener("load",
     () => {
         // On load, init the game
-        init();
+        init(document.getElementById("difficulty-dropdown").value);
     }
 );
 
